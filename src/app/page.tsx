@@ -2,12 +2,15 @@
 import Card from "@/components/ui/card";
 import { getPokemonsQuery, getTypesQuery, read } from "@/utils/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import PokemonDetailsModal from "./pokemonDetails.modal";
 
 const limit = 20;
 
 export default function Home() {
   const [types, setTypes] = useState<number[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedPokemon, setSelectedPokemon] = useState<Pokemons | null>(null);
 
   const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{
     pokemons: Pokemons[];
@@ -50,6 +53,11 @@ export default function Home() {
     }
   };
 
+  const handleSelect = (pokemon: Pokemons) => {
+    setSelectedPokemon(pokemon);
+    setOpenModal(true);
+  };
+
   if (isLoading) {
     return (
       <main className="">
@@ -65,7 +73,7 @@ export default function Home() {
       <section className="flex items-center flex-col gap-4 py-4">
         <div className="w-fit space-y-4">
           <div className="">
-            <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg grid grid-cols-5">
+            <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg grid grid-cols-2 md:grid-cols-5">
               {typesData &&
                 typesData.types.map((type) => {
                   return (
@@ -96,13 +104,13 @@ export default function Home() {
           </div>
           {data?.pages.map((page, idx) => {
             return (
-              <div className="grid grid-cols-4 gap-4" key={idx}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4" key={idx}>
                 {page.pokemons.map((pokemon) => {
                   return (
                     <div
                       className="w-fit"
                       key={pokemon.id}
-                      onClick={() => alert(pokemon.name)}
+                      onClick={() => handleSelect(pokemon)}
                     >
                       <Card data={pokemon} />
                     </div>
@@ -122,6 +130,11 @@ export default function Home() {
             </button>
           </div>
         )}
+        <PokemonDetailsModal
+          openModal={openModal}
+          setOpenModal={(val: boolean) => setOpenModal(val)}
+          selectedPokemon={selectedPokemon?.name as string}
+        />
       </section>
     </main>
   );

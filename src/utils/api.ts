@@ -47,6 +47,39 @@ export const getTypesQuery = () => {
   `;
 };
 
+export const getPokemonDetail = (name: string) => {
+  return gql`
+	{
+		pokemonDetails: pokemon_v2_pokemonspecies(limit: 1, where: {name: {_eq: ${name}}}) {
+			name
+			id
+			flavorText: pokemon_v2_pokemonspeciesflavortexts(where: {pokemon_v2_language: {name: {_eq: "en"}}}, limit: 1) {
+				flavorText: flavor_text
+			}
+			pokemon: pokemon_v2_pokemons {
+				name
+				id
+				stats: pokemon_v2_pokemonstats {
+					baseStat: base_stat
+					stat: pokemon_v2_stat {
+						name
+						statName: pokemon_v2_statnames(where: {pokemon_v2_language: {name: {_eq: "en"}}}, limit: 1) {
+							name
+						}
+					}
+				}
+				types: pokemon_v2_pokemontypes {
+					type: pokemon_v2_type {
+						id
+						name
+					}
+				}
+			}
+		}
+	}	
+	`;
+};
+
 export const read = async <TResult>(param: {
   query: string;
 }): Promise<TResult> => {

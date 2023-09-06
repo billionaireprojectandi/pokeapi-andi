@@ -1,12 +1,9 @@
+import { getImageSource } from "@/utils/function";
 import Image from "next/image";
 import React from "react";
 
 type Props = {
   data: Pokemons;
-};
-
-const getImageSource = (id: number) => {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 };
 
 const Card = (props: Props) => {
@@ -19,7 +16,7 @@ const Card = (props: Props) => {
           height="0"
           sizes="100vw"
           className="w-full h-auto object-cover object-center"
-          alt={name}
+          alt="asdasd"
           src={getImageSource(id)}
         />
       </div>
